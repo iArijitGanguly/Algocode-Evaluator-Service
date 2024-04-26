@@ -1,0 +1,13 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "extends": ["plugin:@typescript-eslint/recommended"],
+    "parserOptions": { "ecmaVersion": 2018, "sourceType": "module" },
+    "rules": {
+        "semi": ["error", "always"],
+        "quotes": ["warn", "single"],
+        "indent": ["warn", 4],
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error"
+    },
+    "plugins": ["simple-import-sort"]
+  }
