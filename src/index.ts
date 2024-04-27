@@ -1,5 +1,6 @@
 import express from 'express';
 
+import logger from './configs/loggerConfig';
 import serverConfig from './configs/serverConfig';
 import sampleQueueProducer from './producers/sampleQueueProducer';
 import apiRouter from './routers';
@@ -11,7 +12,7 @@ const { PORT } = serverConfig;
 app.use('/api', apiRouter);
 
 app.listen(PORT, () => {
-    console.log(`Server started at PORT: ${PORT}`);
+    logger.info(`Server started at PORT: ${PORT}`);
 
     SampleWorker('SampleQueue');
 

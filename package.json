@@ -29,6 +29,8 @@
     "eslint": "^8.57.0",
     "eslint-plugin-simple-import-sort": "^12.1.0",
     "express": "^4.19.2",
-    "ioredis": "^5.4.1"
+    "ioredis": "^5.4.1",
+    "winston": "^3.13.0",
+    "winston-mongodb": "^5.1.1"
   }
 }
