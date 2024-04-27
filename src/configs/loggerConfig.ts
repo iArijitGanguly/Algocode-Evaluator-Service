@@ -18,14 +18,12 @@ allowedTransports.push(new winston.transports.Console({
     )
 }));
 
-if(LOG_DB_URL) {
-    allowedTransports.push(new winston.transports.MongoDB({
-        level: 'error',
-        db: LOG_DB_URL,
-        collection: 'logs',
-        options: { useUnifiedTopology: true}
-    }));
-}
+allowedTransports.push(new winston.transports.MongoDB({
+    level: 'error',
+    db: LOG_DB_URL,
+    collection: 'logs',
+    options: { useUnifiedTopology: true}
+}));
 
 allowedTransports.push(new winston.transports.File({
     filename: 'app.log'
