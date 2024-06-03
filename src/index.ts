@@ -1,3 +1,4 @@
+import bodyParser from 'body-parser';
 import express from 'express';
 
 import bullboardAdapter from './configs/bullboardConfig';
@@ -9,6 +10,10 @@ import SampleWorker from './workers/SampleWorker';
 
 const app = express();
 const { PORT } = serverConfig;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(bodyParser.text());
 
 app.use('/api', apiRouter);
 app.use('/bullboard', bullboardAdapter.getRouter());

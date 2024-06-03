@@ -10,4 +10,4 @@
         "simple-import-sort/exports": "error"
     },
     "plugins": ["simple-import-sort"]
-  }
+}
