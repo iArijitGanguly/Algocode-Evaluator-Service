@@ -6,6 +6,8 @@ import pullImage from './pullImage';
 
 async function runCpp(code: string, inputTestCase: string) {
     const rawLogBuffer: Buffer[] = [];
+
+    logger.info('Pulling the c++ image');
     await pullImage(CPP_IMAGE);
 
     logger.info('Initialising c++ container');

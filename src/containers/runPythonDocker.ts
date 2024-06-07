@@ -6,6 +6,8 @@ import pullImage from './pullImage';
 
 async function runPython(code: string, inputTestCase: string) {
     const rawLogBuffer: Buffer[] = [];
+
+    logger.info('Pulling the python image');
     await pullImage(PYTHON_IMAGE);
 
     logger.info('Initialising python container');

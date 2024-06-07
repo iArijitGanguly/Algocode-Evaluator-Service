@@ -6,6 +6,8 @@ import pullImage from './pullImage';
 
 async function runJava(code: string, inputTestCase: string) {
     const rawLogBuffer: Buffer[] = [];
+
+    logger.info('Pulling the java image');
     await pullImage(JAVA_IMAGE);
 
     logger.info('Initialising java container');
