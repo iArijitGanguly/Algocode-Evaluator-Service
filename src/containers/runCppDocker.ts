@@ -1,4 +1,5 @@
 import logger from '../configs/loggerConfig';
+import { DockerStreamOutput } from '../types/DockerStreamOutput';
 import { CPP_IMAGE } from '../utils/constants';
 import createContainer from './containerFactory';
 import decodeDockerStream from './dockerHelper';
@@ -29,7 +30,7 @@ async function runCpp(code: string, inputTestCase: string) {
         rawLogBuffer.push(chunk);
     });
 
-    await new Promise((res) => {
+    const response: DockerStreamOutput = await new Promise((res) => {
         loggerStream.on('end', () => {
             console.log(rawLogBuffer);
             const completeBuffer = Buffer.concat(rawLogBuffer);
@@ -41,6 +42,7 @@ async function runCpp(code: string, inputTestCase: string) {
     });
 
     await cppDockerContainer.remove();
+    return response;
 }
 
 export default runCpp;

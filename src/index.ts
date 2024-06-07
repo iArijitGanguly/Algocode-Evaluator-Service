@@ -4,12 +4,11 @@ import express from 'express';
 import bullboardAdapter from './configs/bullboardConfig';
 import logger from './configs/loggerConfig';
 import serverConfig from './configs/serverConfig';
-// import runPython from './containers/runPythonDocker';
-// import sampleQueueProducer from './producers/sampleQueueProducer';
-// import runJava from './containers/runJavaDocker';
-import runCpp from './containers/runCppDocker';
+import submissionQueueProducer from './producers/submissionQueueProducer';
 import apiRouter from './routers';
+import { SUBMISSION_QUEUE } from './utils/constants';
 import SampleWorker from './workers/SampleWorker';
+import SubmissionWorker from './workers/SubmissionWorker';
 
 const app = express();
 const { PORT } = serverConfig;
@@ -25,6 +24,7 @@ app.listen(PORT, () => {
     logger.info(`Server started at PORT: ${PORT}`);
 
     SampleWorker('SampleQueue');
+    SubmissionWorker(SUBMISSION_QUEUE);
 
     //     const code = `x = input()
     // y = input()
@@ -62,7 +62,13 @@ app.listen(PORT, () => {
         }
     `;
 
-    runCpp(code, '10');
+    const inputTestCase = '10';
+
+    submissionQueueProducer({'1234': {
+        language: 'CPP',
+        code,
+        inputTestCase
+    }});
 
     // sampleQueueProducer('SampleJob', {
     //     name: 'Arijit',
