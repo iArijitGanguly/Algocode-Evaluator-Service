@@ -7,7 +7,7 @@ import serverConfig from './configs/serverConfig';
 import submissionQueueProducer from './producers/submissionQueueProducer';
 import apiRouter from './routers';
 import { SUBMISSION_QUEUE } from './utils/constants';
-import SampleWorker from './workers/SampleWorker';
+// import SampleWorker from './workers/SampleWorker';
 import SubmissionWorker from './workers/SubmissionWorker';
 
 const app = express();
@@ -23,7 +23,7 @@ app.use('/bullboard', bullboardAdapter.getRouter());
 app.listen(PORT, () => {
     logger.info(`Server started at PORT: ${PORT}`);
 
-    SampleWorker('SampleQueue');
+    // SampleWorker('SampleQueue');
     SubmissionWorker(SUBMISSION_QUEUE);
 
     //     const code = `x = input()
