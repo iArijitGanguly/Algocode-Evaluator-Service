@@ -6,9 +6,9 @@ import decodeDockerStream from './dockerHelper';
 import pullImage from './pullImage';
 
 class CppExecutor implements CodeExecutorStrategy {
-    async execute(code: string, inputTestCase: string): Promise<ExecutionResponse> {
+    async execute(code: string, inputTestCase: string, outputTestCase: string): Promise<ExecutionResponse> {
         const rawLogBuffer: Buffer[] = [];
-
+        console.log(code, inputTestCase, outputTestCase);
         logger.info('Pulling the c++ image');
         await pullImage(CPP_IMAGE);
     

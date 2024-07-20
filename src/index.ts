@@ -4,10 +4,8 @@ import express from 'express';
 import bullboardAdapter from './configs/bullboardConfig';
 import logger from './configs/loggerConfig';
 import serverConfig from './configs/serverConfig';
-import submissionQueueProducer from './producers/submissionQueueProducer';
 import apiRouter from './routers';
 import { SUBMISSION_QUEUE } from './utils/constants';
-// import SampleWorker from './workers/SampleWorker';
 import SubmissionWorker from './workers/SubmissionWorker';
 
 const app = express();
@@ -46,29 +44,21 @@ app.listen(PORT, () => {
     // }
     // `;
 
-    const code = `
-        #include<iostream>
-        using namespace std;
+    // const code = `
+    //     #include<iostream>
+    //     using namespace std;
 
-        int main() {
-            int val;
-            cin >> val;
-            cout << "user has given the value : " << val << endl;
-            for(int i = 0; i < val; i++) {
-                cout << i << " ";
-            }
-            cout << endl;
-            return 0;
-        }
-    `;
-
-    const inputTestCase = '10';
-
-    submissionQueueProducer({'1234': {
-        language: 'CPP',
-        code,
-        inputTestCase
-    }});
+    //     int main() {
+    //         int val;
+    //         cin >> val;
+    //         cout << "user has given the value : " << val << endl;
+    //         for(int i = 0; i < val; i++) {
+    //             cout << i << " ";
+    //         }
+    //         cout << endl;
+    //         return 0;
+    //     }
+    // `;
 
     // sampleQueueProducer('SampleJob', {
     //     name: 'Arijit',
