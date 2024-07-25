@@ -10,6 +10,9 @@ async function createContainer(imageName: string, cmdExecutable: string[]) {
         AttachStdout: true,
         AttachStderr: true,
         OpenStdin: true,
+        HostConfig: {
+            Memory: 1024 * 1024 * 512
+        },
         Tty: false
     });
     

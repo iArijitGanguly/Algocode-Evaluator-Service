@@ -6,7 +6,7 @@ import serverConfig from './serverConfig';
 
 const { LOG_DB_URL } = serverConfig;
 
-const allowedTransports: Array<winston.transport> = [];
+const allowedTransports = new Array<winston.transport>();
 
 allowedTransports.push(new winston.transports.Console({
     format: winston.format.combine(
@@ -22,7 +22,7 @@ allowedTransports.push(new winston.transports.MongoDB({
     level: 'error',
     db: LOG_DB_URL,
     collection: 'logs',
-    options: { useUnifiedTopology: true}
+    options: { useUnifiedTopology: true }
 }));
 
 allowedTransports.push(new winston.transports.File({

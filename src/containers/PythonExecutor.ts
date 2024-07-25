@@ -1,61 +1,60 @@
 import logger from '../configs/loggerConfig';
 import { CodeExecutorStrategy, ExecutionResponse } from '../types/CodeExecutorStrategy';
-import { PYTHON_IMAGE } from '../utils/constants';
+import { TestCase } from '../types/SubmissionPayload';
+import { PYTHON_IMAGE, PYTHON_TIME_LIMIT } from '../utils/constants';
+import fetchDecodedStream from '../utils/fetchDecodedStream';
 import createContainer from './containerFactory';
-import decodeDockerStream from './dockerHelper';
 import pullImage from './pullImage';
 
 class PythonExecutor implements CodeExecutorStrategy {
-    async execute(code: string, inputTestCase: string, outputTestCase: string): Promise<ExecutionResponse> {
-        const rawLogBuffer: Buffer[] = [];
-        console.log(code, inputTestCase, outputTestCase);
+    async execute(code: string, testCases: TestCase[]): Promise<ExecutionResponse[]> {
+        const result: ExecutionResponse[] = [];
         logger.info('Pulling the python image');
         await pullImage(PYTHON_IMAGE);
+        
+        for(const testCase of testCases) {
+            logger.info('Initialising python container');
+            const rawLogBuffer: Buffer[] = [];
+            // eslint-disable-next-line quotes
+            const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > test.py && echo '${testCase.input.replace(/'/g, `'\\"`)}' | python3 test.py`;
+            const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['/bin/sh', '-c', runCommand]);
+            await pythonDockerContainer.start();
+            logger.info('Starting the container');
     
-        logger.info('Initialising python container');
-        // eslint-disable-next-line quotes
-        const runCommand = `echo '${code.replace(/'/g, `'\\"`)}' > test.py && echo '${inputTestCase.replace(/'/g, `'\\"`)}' | python3 test.py`;
-        // const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['python3', '-c', code, 'stty -echo']);
-        const pythonDockerContainer = await createContainer(PYTHON_IMAGE, ['/bin/sh', '-c', runCommand]);
-        await pythonDockerContainer.start();
-        logger.info('Starting the container');
+            const loggerStream = await pythonDockerContainer.logs({
+                stdout: true,
+                stderr: true,
+                timestamps: false,
+                follow: true
+            });
     
-        const loggerStream = await pythonDockerContainer.logs({
-            stdout: true,
-            stderr: true,
-            timestamps: false,
-            follow: true
-        });
-    
-        loggerStream.on('data', (chunk: Buffer) => {
-            rawLogBuffer.push(chunk);
-        });
+            loggerStream.on('data', (chunk: Buffer) => {
+                rawLogBuffer.push(chunk);
+            });
 
-        try{
-            const codeResponse = await this.fetchDecodedStream(loggerStream, rawLogBuffer);
-            return { output: codeResponse, status: 'COMPLETED' };
-        } catch(error) {
-            return { output: error as string, status: 'ERROR'};
-        } finally {
-            await pythonDockerContainer.remove();
-        }
-    }
-
-    fetchDecodedStream(loggerStream: NodeJS.ReadableStream, rawLogBuffer: Buffer[]): Promise<string> {
-        return new Promise((res, rej) => {
-            loggerStream.on('end', () => {
-                console.log(rawLogBuffer);
-                const completeBuffer = Buffer.concat(rawLogBuffer);
-                const decodedStream = decodeDockerStream(completeBuffer);
-                if(decodedStream.stdout) {
-                    res(decodedStream.stdout);
+            try{
+                const codeResponse = await fetchDecodedStream(loggerStream, rawLogBuffer, PYTHON_TIME_LIMIT);
+                if(codeResponse.trim() == testCase.output.trim()) {
+                    result.push({ output: codeResponse.trim(), status: 'SUCCESS', expectedOutput: testCase.output.trim() });
                 }
                 else {
-                    rej(decodedStream.stderr);
+                    result.push({ output: codeResponse.trim(), status: 'WA', expectedOutput: testCase.output.trim() });
                 }
-            });
-        });
+            } catch(error) {
+                if(error == 'TLE') {
+                    await pythonDockerContainer.kill();
+                    result.push({ output: 'TLE', status: 'ERROR' });
+                }
+                else {
+                    result.push({ output: 'MLE', status: 'ERROR' });
+                }
+            } finally {
+                await pythonDockerContainer.remove();
+            }
+        }
+        return result;
     }
+
 }
 
 export default PythonExecutor;

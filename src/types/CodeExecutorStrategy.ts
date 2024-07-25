@@ -1,8 +1,11 @@
+import { TestCase } from './SubmissionPayload';
+
 export interface CodeExecutorStrategy {
-    execute(code: string, inputTestCase: string, outputTestCase: string): Promise<ExecutionResponse>
+    execute(code: string, testCases: TestCase[]): Promise<ExecutionResponse[]>
 }
 
 export type ExecutionResponse = {
     output: string,
-    status: string
+    status: string,
+    expectedOutput?: string
 };
