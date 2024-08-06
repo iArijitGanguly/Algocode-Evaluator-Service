@@ -12,7 +12,7 @@ allowedTransports.push(new winston.transports.Console({
     format: winston.format.combine(
         winston.format.colorize(),
         winston.format.timestamp({
-            format: 'YYYY-MM-DD HH:MM:SS'
+            format: 'YYYY-MM-DD HH:mm:ss'
         }),
         winston.format.printf((log) => `${log.timestamp} [${log.level}]: ${log.message}`)
     )

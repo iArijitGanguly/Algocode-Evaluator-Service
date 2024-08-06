@@ -28,7 +28,7 @@ export default class SubmissionJob implements IJob {
 
             if(strategy != null) {
                 const response = await strategy.execute(code, testCases);
-                logger.info(response);
+                logger.info(JSON.stringify(response, null, 2));
                 await evaluationQueueProducer({ response, userId, submissionId });
             }
         }
